@@ -31,6 +31,11 @@
 #include "util.h"
 
 #define ENTRIES "validator,databasebase"
+#define CHEROKEE_ERROR_VALIDATOR_DATABASE_KEY 1000
+#define CHEROKEE_ERROR_VALIDATOR_DATABASE_HASH 1001
+#define CHEROKEE_ERROR_VALIDATOR_DATABASE_NO_BALANCER 1002
+#define CHEROKEE_ERROR_VALIDATOR_DATABASE_QUERY 1003
+
 
 ret_t
 cherokee_validator_database_base_props_free (cherokee_validator_database_base_props_t *props)
@@ -175,7 +180,7 @@ cherokee_validator_database_base_check (cherokee_validator_database_base_t *base
 	cherokee_buffer_t                         db_passwd   = CHEROKEE_BUF_INIT;
 	cherokee_buffer_t                         user_passwd = CHEROKEE_BUF_INIT;
 	cherokee_buffer_t                         query       = CHEROKEE_BUF_INIT;
-	cherokee_validator_database_base_props_t *props	      = PROP_DATABASE_BASE(base);
+	cherokee_validator_database_base_props_t *props	      = VAL_DATABASE_BASE_PROP(base);
 
 	/* Sanity checks
 	 */

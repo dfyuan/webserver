@@ -58,6 +58,10 @@ cherokee_validator_mysql_configure (cherokee_config_node_t *conf, cherokee_serve
 	}
 
 	props = PROP_MYSQL(*_props);
+        /* Init base class
+	 */
+        ret = cherokee_validator_database_base_configure (conf, srv, _props);
+        if (ret != ret_ok) return ret;
 
 	return ret_ok;
 }
@@ -113,7 +117,7 @@ cherokee_validator_mysql_free (cherokee_validator_mysql_t *mysql)
 ret_t
 cherokee_validator_mysql_connect (cherokee_validator_mysql_t *mysql, cherokee_source_t *src_ref)
 {
-	cherokee_validator_database_base_props_t *props = PROP_DATABASE_BASE(mysql);
+	cherokee_validator_database_base_props_t *props = VAL_DATABASE_BASE_PROP(mysql);
 	MYSQL *conn;
 
 	mysql->conn = mysql_init (NULL);
@@ -176,8 +180,6 @@ cherokee_validator_mysql_query (cherokee_validator_mysql_t *mysql, cherokee_buff
 	lengths = mysql_fetch_lengths (result);
 
 	cherokee_buffer_add (db_passwd, row[0], (size_t) lengths[0]);
-	mysql_free_result (result);
-
 	ret = ret_ok;
 
 done:

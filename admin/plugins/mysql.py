@@ -25,6 +25,8 @@
 import CTK
 import Auth
 import validations
+import Balancer
+import Cherokee
 
 from util import *
 from consts import *
@@ -32,9 +34,6 @@ from consts import *
 URL_APPLY = '/plugin/mysql/apply'
 HELPS     = [('modules_validators_mysql', "MySQL")]
 
-NOTE_HOST   = N_('MySQL server IP address.')
-NOTE_PORT   = N_('Server port to connect to.')
-NOTE_UNIX   = N_('Full path of Unix socket to communicate with the data base.')
 NOTE_USER   = N_('User name for connecting to the database.')
 NOTE_PASSWD = N_('Password for connecting to the database.')
 NOTE_DB     = N_('Database name containing the user/password pair list.')
@@ -73,9 +72,6 @@ class Plugin_mysql (Auth.PluginAuth):
         self.AddCommon (supported_methods=('basic','digest'))
 
         table = CTK.PropsTable()
-        table.Add (_('Host'),          CTK.TextCfg("%s!host"%(self.key), True),        _(NOTE_HOST))
-        table.Add (_('Port'),          CTK.TextCfg("%s!port"%(self.key), True),        _(NOTE_PORT))
-        table.Add (_('Unix Socket'),   CTK.TextCfg("%s!unix_socket"%(self.key), True), _(NOTE_UNIX))
         table.Add (_('DB User'),       CTK.TextCfg("%s!user"%(self.key), False),       _(NOTE_USER))
         table.Add (_('DB Password'),   CTK.TextCfg("%s!passwd"%(self.key), True),      _(NOTE_PASSWD))
         table.Add (_('Database'),      CTK.TextCfg("%s!database"%(self.key), False),   _(NOTE_DB))
@@ -88,6 +84,15 @@ class Plugin_mysql (Auth.PluginAuth):
         self += CTK.RawHTML ("<h2>%s</h2>" % (_('MySQL Connection')))
         self += CTK.Indenter (submit)
         self += CTK.RawHTML (js=BASIC_HASH_HACK)
+
+        # Load Balancing
+        modul = CTK.PluginSelector('%s!balancer'%(key), trans_options(Cherokee.support.filter_available (BALANCERS)))
+        table = CTK.PropsTable()
+        table.Add (_("Balancer"), modul.selector_widget, _(Balancer.NOTE_BALANCER))
+
+        self += CTK.RawHTML ('<h2>%s</h2>' %(_('Data Base Balancing')))
+        self += CTK.Indenter (table)
+        self += modul
 
         # Publish
         VALS = [("%s!passwdfile"%(self.key), validations.is_local_file_exists)]

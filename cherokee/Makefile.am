@@ -1212,7 +1212,11 @@ endif
 #
 # Validator mysql
 #
+
+validatormysql_base = validator_database_base.c validator_database_base.h
+
 validator_mysql = \
+$(validatormysql_base) \
 validator_mysql.c \
 validator_mysql.h
 

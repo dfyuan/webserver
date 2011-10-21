@@ -26,35 +26,18 @@
 #define CHEROKEE_VALIDATOR_MYSQL_H
 
 #include "validator.h"
+#include "validator_database_base.h"
 #include "connection.h"
 
 #include <mysql.h>
 
 typedef struct {
-	cherokee_validator_t	validator;
-	MYSQL		       *conn;
+	cherokee_validator_database_base_t  validator;
+	MYSQL		                   *conn;
 } cherokee_validator_mysql_t;
 
-typedef enum {
-	cherokee_mysql_hash_none,
-	cherokee_mysql_hash_md5,
-	cherokee_mysql_hash_sha1,
-	cherokee_mysql_hash_sha512
-} cherokee_mysql_hash_t;
-
 typedef struct {
-	cherokee_module_props_t	base;
-
-	cherokee_buffer_t	host;
-	cint_t			port;
-	cherokee_buffer_t       unix_socket;
-
-	cherokee_buffer_t       user;
-	cherokee_buffer_t	passwd;
-	cherokee_buffer_t	database;
-	cherokee_buffer_t	query;
-
-	cherokee_mysql_hash_t   hash_type;
+	cherokee_validator_database_base_props_t base;
 } cherokee_validator_mysql_props_t;
 
 #define MYSQL(x)           ((cherokee_validator_mysql_t *)(x))
@@ -65,7 +48,8 @@ ret_t cherokee_validator_mysql_configure (cherokee_config_node_t *conf, cherokee
 
 ret_t cherokee_validator_mysql_new         (cherokee_validator_mysql_t **mysql, cherokee_module_props_t *props);
 ret_t cherokee_validator_mysql_free        (cherokee_validator_mysql_t  *mysql);
-ret_t cherokee_validator_mysql_check       (cherokee_validator_mysql_t  *mysql, cherokee_connection_t *conn);
-ret_t cherokee_validator_mysql_add_headers (cherokee_validator_mysql_t  *mysql, cherokee_connection_t *conn, cherokee_buffer_t *buf);
+
+ret_t cherokee_validator_mysql_query       (cherokee_validator_mysql_t *mysql, cherokee_buffer_t query, cherokee_buffer_t user, cherokee_buffer_t *db_passwd);
+ret_t cherokee_validator_mysql_connect     (cherokee_validator_mysql_t *mysql, cherokee_source_t *src_ref);
 
 #endif /* CHEROKEE_VALIDATOR_MYSQL_H */
